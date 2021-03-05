@@ -35,18 +35,19 @@ array:9 [▼
 ]
 ```
 
-The way I want to approach this assignment is:
-    The main process is a job / controller called MigrateData. 
-    The process will use JSONReader, https://github.com/pcrov/JsonReader, to parse JSON file one by one.
-    This allows the process to circumvent PHP's limited memory.
+**The way I want to approach this assignment is**
 
-    Per entry a new user and creditcard model is instantiated, allowing for model functions to be used. If the model passes all
-    requirements, it's queued as a seperate, batchable? job. 
-    
-    Then, once it's finished. The queue can be ran, or it's already running in the meantime, migrating each entry seperatly to the database.
-    Thus, allowing the process to be interruptible. 
+The main process is a job / controller called MigrateData. 
+The process will use JSONReader, https://github.com/pcrov/JsonReader, to parse JSON file one by one.
+This allows the process to circumvent PHP's limited memory.
+
+Per entry a new user and creditcard model is instantiated, allowing for model functions to be used. If the model passes all
+requirements, it's queued as a seperate, batchable? job. 
+
+Then, once it's finished. The queue can be ran, or it's already running in the meantime, migrating each entry seperatly to the database.
+Thus, allowing the process to be interruptible. 
 
 * Working with Jobs and Queues. https://laravel.com/docs/8.x/queues
-    - The queue should be set to database in the .env file.
+- The queue should be set to database in the .env file.
 
 
