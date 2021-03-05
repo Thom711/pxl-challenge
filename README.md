@@ -38,7 +38,7 @@ array:9 [▼
 **The way I want to approach this assignment is**
 
 The main process is a job / controller called MigrateData. 
-The process will use JSONReader, https://github.com/pcrov/JsonReader, to parse JSON file one by one.
+The process will use JSONReader, https://github.com/pcrov/JsonReader, to parse JSON file line by line.
 This allows the process to circumvent PHP's limited memory.
 
 Per entry a new user and creditcard model is instantiated, allowing for model functions to be used. If the model passes all
@@ -51,3 +51,5 @@ Thus, allowing the process to be interruptible.
 - The queue should be set to database in the .env file.
 
 
+I thought about using batchable jobs to split the json file into jobs per 100 rows. But this meant still having to load the JSON file in first. So
+JSON reader is the way to go I think. It should still be possible to code it a bit dynamic and batch the jobs per 100 entries. 
