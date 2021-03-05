@@ -1,62 +1,51 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Working Method
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+** Assignment **
+In resources/opdracht is a file called challenge.json. Goal is to write the content of that
+file neatly to a database. Preferably as a background task in a Laravel application. After
+finishing, it's important to document the way of thinking behind my approach.
 
-## About Laravel
+The process needs to be interuptable, in a way that it will continue where it left off without duplicating data. 
+The process needs to be extendable. The hypothetical client might have extra wishes it wants added at a later date.
+Don't go overboard on the database design, eloquent models or relations. It's about the structure.
+Only transfer records where the age is between 18 and 65, or where the age is unknown.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Extra: If the file is 500 times as big, it should still be executable. It should be easy to execute the process on XML or CSV files.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+** Before starting, it's important to know how the data in the JSON file is structured **
 
-## Learning Laravel
+    `array:9 [▼
+        "name" => "Prof. Simeon Green"
+        "address" => "328 Bergstrom Heights Suite 709 49592 Lake Allenville"
+        "checked" => false
+        "description" => "Voluptatibus nihil dolor quaerat. Reprehenderit est molestias quia nihil consectetur voluptatum et.<br>Ea officiis ex ea suscipit dolorem. Ut ab vero fuga.<br>Q ▶"
+        "interest" => null
+        "date_of_birth" => "1989-03-21T01:11:13+00:00"
+        "email" => "nerdman@cormier.net"
+        "account" => "556436171909"
+        "credit_card" => array:4 [▼
+            "type" => "Visa"
+            "number" => "4532383564703"
+            "name" => "Brooks Hudson"
+            "expirationDate" => "12/19"
+        ]
+    ]`
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The way I want to approach this assignment is:
+    The main process is a job / controller called MigrateData. 
+    The process will use JSONReader [https://github.com/pcrov/JsonReader](https://github.com/pcrov/JsonReader) to parse JSON file one by one.
+    This allows the process to circumvent PHP's limited memory.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    Per entry a new user and creditcard model is instantiated, allowing for model functions to be used. If the model passes all
+    requirements, it's queued as a seperate -batchable?- job. 
+    
+    Then, once it's finished. The queue can be ran -or it's already running in the meantime?- migrating each entry seperatly to the database.
+    Thus, allowing the process to be interruptible. 
 
-## Laravel Sponsors
+    
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+    - Working with Jobs and Queues. [documentation](https://laravel.com/docs/8.x/queues)
+        - The queue should be set to database in the .env file.
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

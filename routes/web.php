@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +15,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+
+    $files = File::allFiles(base_path('resources/opdracht'));
+
+    foreach($files as $file) {
+        $json = json_decode(File::get($file), true);
+
+        dd($json[0]);
+    }
 });
