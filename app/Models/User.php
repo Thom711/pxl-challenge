@@ -18,8 +18,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'address',
+        'checked',
+        'description',
+        'interests',
+        'date_of_birth',
         'email',
-        'password',
+        'account',
+        'creditcard_id',
     ];
 
     /**
@@ -27,17 +33,17 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = [];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    protected $casts = [];
+
+    public function creditcard()
+    {
+        return $this->hasOne(Creditcard::class);
+    }
 }
