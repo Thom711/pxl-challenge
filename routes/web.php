@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\MigrateController;
+use App\Jobs\MigrateData;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,16 +15,14 @@ use Illuminate\Support\Facades\File;
 |
 */
 
-// Route::get('/', function () {
-//     // return view('welcome');
-
-//     $files = File::allFiles(base_path('resources/opdracht'));
-
-//     foreach($files as $file) {
-//         $json = json_decode(File::get($file), true);
-
-//         dd($json[0]);
-//     }
-// });
-
 Route::get('/', [MigrateController::class, 'store']);
+
+// Route::get('/', function () {
+//     $path = 'resources/opdracht/challenge.json';
+//     $minAge = 18;
+//     $maxAge = 65;
+
+//     MigrateData::dispatch($path, $minAge, $maxAge);
+
+//     return view('welcome');
+// });

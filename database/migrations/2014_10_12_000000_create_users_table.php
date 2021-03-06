@@ -19,11 +19,10 @@ class CreateUsersTable extends Migration
             $table->string('address');
             $table->boolean('checked');
             $table->text('description');
-            $table->text('interests')->nullable();
+            $table->text('interest')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('email');
-            $table->integer('account');
-            $table->foreignId('creditcard_id')->contrained();
+            $table->bigInteger('account');
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,7 +22,7 @@ class User extends Authenticatable
         'address',
         'checked',
         'description',
-        'interests',
+        'interest',
         'date_of_birth',
         'email',
         'account',
@@ -46,4 +47,25 @@ class User extends Authenticatable
     {
         return $this->hasOne(Creditcard::class);
     }
+
+    public function setDateOfBirth($date) // Unfortunatly I wrote this in PHP 7.4 :(. In 8 I could have done string|null
+    {
+        $date_of_birth = null;
+
+        if ($date !== null) {
+            $carbon = new Carbon(str_replace('/', '-', $date));
+
+            $date_of_birth = $carbon->isoFormat('Y-M-D');
+        }
+
+        return $date_of_birth;
+    }
+
+    public function isOfRightAge(Carbon $minDate, Carbon $maxDate)
+    {
+        $date_of_birth = $this->attributes['date_of_birth'];
+
+        return (($date_of_birth > $minDate && $date_of_birth < $maxDate) || $date_of_birth === null);
+    }
+   
 }
