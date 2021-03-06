@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\MigrateController;
 use App\Jobs\MigrateData;
 use Illuminate\Support\Facades\Route;
 
@@ -15,14 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [MigrateController::class, 'store']);
+Route::get('/', function () {
+    $path = 'resources/opdracht/challenge.json';
+    $minAge = 18;
+    $maxAge = 65;
 
-// Route::get('/', function () {
-//     $path = 'resources/opdracht/challenge.json';
-//     $minAge = 18;
-//     $maxAge = 65;
+    MigrateData::dispatch($path, $minAge, $maxAge);
 
-//     MigrateData::dispatch($path, $minAge, $maxAge);
-
-//     return view('welcome');
-// });
+    return view('welcome');
+});
