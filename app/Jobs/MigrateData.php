@@ -43,6 +43,7 @@ class MigrateData implements ShouldQueue
         $reader->open(base_path($this->path));
 
         $reader->read();
+
         $reader->read();
 
         while ($reader->type() === JsonReader::OBJECT) {
