@@ -48,7 +48,7 @@ class HandleUser implements ShouldQueue
             'account' => $this->data['account'],
         ]);
 
-        $user->date_of_birth = $user->setDateOfBirth($this->data['date_of_birth']);
+        $user->setDateOfBirth($this->data['date_of_birth']);
 
         if ($user->isOfRightAge($this->minDate, $this->maxDate)) {
             $user->save();

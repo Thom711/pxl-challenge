@@ -48,7 +48,7 @@ class User extends Authenticatable
         return $this->hasOne(Creditcard::class);
     }
 
-    public function setDateOfBirth($date) // Unfortunatly I wrote this in PHP 7.4 :(. In 8 I could have done string|null
+    public function setDateOfBirth($date) // Unfortunatly I wrote this in PHP 7.4 :(. In 8 I could have hinted string|null
     {
         $date_of_birth = null;
 
@@ -58,7 +58,7 @@ class User extends Authenticatable
             $date_of_birth = $carbon->isoFormat('Y-M-D');
         }
 
-        return $date_of_birth;
+        $this->date_of_birth = $date_of_birth;
     }
 
     public function isOfRightAge(Carbon $minDate, Carbon $maxDate)

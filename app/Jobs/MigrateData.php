@@ -55,6 +55,4 @@ class MigrateData implements ShouldQueue
     
         $reader->close();
     }
-
-
 }
