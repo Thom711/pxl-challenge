@@ -59,22 +59,25 @@ JSON reader is the way to go I think. It should still be possible to code it a b
 For testing convenience I first build the code out in a controller. So I don't have to dispatch jobs every single time. After messing around a bit it
 works quite nicely I think. It works like this:
 You give it a path to the file, and the minimum and maximum age the user may have.
-It then instantiates the JsonReader, which opens the Json file.  JsonReader streams
-the file instead of loading it in memory.
+It then instantiates the JsonReader, which opens the Json file.  JsonReader streams the file instead of loading it in memory.
 
 For each entry it comes across it calls HandleUser, giving it the user data.
 
 HandleUser makes a new User model, and fills it with the data that is readely available. The date of birth is handled by a function on the user model, which
 transform the variety of the given birthdays into a standard format.
 
-Then there's a check if the user matches the age criteria, is it between the given
-ages or is it null? Handled by another function on the user model. If it passes
-the criteria, it's persisted to the database and the creditcard data is loaded in.
-The expiration date is transformed to a date string using Carbon, then the
-creditcard is also persisted. And done!
+Then there's a check if the user matches the age criteria, is it between the given ages or is it null? Handled by another function on the user model. If it 
+passes the criteria, it's persisted to the database and the creditcard data is loaded in. The expiration date is transformed to a date string using Carbon, 
+then the creditcard is also persisted. And done!
 
-First I made the whole thing in a controller, next up is transforming it to jobs.
-My first idea is having each user be a seperate job. I wonder at how many jobs
-in the queue Laravel caps out at? After trying it out, not at 10,000 at least. I'll still look into batching though.
+First I made the whole thing in a controller, next up is transforming it to jobs. My first idea is having each user be a seperate job. I wonder at how many jobs
+in the queue Laravel caps out at? After trying it out, not at 10,000 at least. It seems to work just fine, I'll keep it this way.
 
+For the page styling I used TailwindCSS, so make sure you run npm install first. I've had some fun in figuring out how Laravel file upload works. Did you know
+that if you just let it do it's thing a Json file is stored as txt? Why!?
 
+I know it's not done to do it all in the routes file, but I didn't deem it neccecary for this assignment to make it run through controllers. If the front does not
+work, there's a commented bit at the routes file that instantiates the job instantly.
+
+The  filetype is checked in a job, to keep all logic seperated. A different idea I played with was checking it on input. Only running the job if the given file
+is a json (or xml, or csv). 
