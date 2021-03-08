@@ -76,4 +76,8 @@ in the queue Laravel caps out at? After trying it out, not at 10,000 at least. I
 For the page styling I used TailwindCSS, so make sure you run npm install first. I've had some fun in figuring out how Laravel file upload works. Did you know
 that if you just let it do it's thing a Json file is stored as txt? Why!?
 
-I know it's not done to do it all in the routes file, but I didn't deem it neccecary for this assignment to make it run through controllers. 
+I know it's not done to do it all in the routes file, but I didn't deem it neccecary for this assignment to make it run through controllers. If the front does not
+work, there's a commented bit at the routes file that instantiates the job instantly.
+
+The  filetype is checked in a job, to keep all logic seperated. A different idea I played with was checking it on input. Only running the job if the given file
+is a json (or xml, or csv). 
