@@ -1,3 +1,33 @@
+# Documentation
+Hello people! How to use the app:
+* Install dependancies, composer install and npm install (JsonReader and TailwindCSS)
+* In .env, set the queue-connection to database.
+* Open the home page
+* Upload the challenge.json file and click submit
+* Run php artisan queue:work
+
+Clicking submit moves the given file to storage and sets the MigrateData job in the queue. This job takes the path to the file, it's extension and the given minimum and 
+maximum ages of users. It then checks the file extension, if it's Json the MigrateDataJson job is called. 
+
+This job transforms the min age and max age to Carbon instances then reads the file
+with JsonReader. JsonReader loads the file line by line, instead of all at once. For each object in the file a HandleUser job is called. After MigrateDataJson is finished, you can interrupt the process whenever you want. 
+
+HandleUser instantiates a User model, and fills it with the data given from the Json file. By a method on the User model, the date of birth field is set. The next method
+checks if the user meets the criteria (above 18, under 65 or birthdate unknown). Only
+then it's persisted in the database. The creditcard model is then created and persisted as well.
+
+That's all there is to it!
+
+Some notes:
+* I looked into batching, but it's new to me so I decided not to use it for now. 
+* The minimum and maximum age could be inputs on the home page.
+* All the logic is handled in the routes file, which is not done I know. This should be in a controller.
+* You could check the file type in the controller then as well, instead of a seperate job.
+
+
+Below are the thought processes I had while creating this, if you're interested.
+
+
 # Working Method
 
 **Assignment**
