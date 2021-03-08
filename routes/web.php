@@ -1,6 +1,5 @@
 <?php
 
-use App\Jobs\CheckFile;
 use App\Jobs\MigrateData;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +23,7 @@ Route::get('/', function () {
 });
 
 Route::post('/', function () {
-    // If this was in an application this reeeeally should be in a controller.
+    // If this was in an application this reeeeally should be in a controller. It feels bad doing it in the routes file.
     $jobMessage = '';
 
     if(request('file')) {
@@ -49,7 +48,7 @@ Route::post('/', function () {
     }
 });
 
-//  In case the front does not work: 
+//  In case the front does not work, comment the above two methods and uncomment the code below: 
 //
 // Route::get('/', function () {
 //     $path = 'resources/opdracht/challenge.json';

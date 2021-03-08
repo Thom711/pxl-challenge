@@ -20,6 +20,7 @@ That's all there is to it!
 
 Some notes:
 * I looked into batching, but it's new to me so I decided not to use it for now. 
+* I thought about calling the queue like this: Artisan::call('queue:work');, but it freezes the page until it's finished.
 * The minimum and maximum age could be inputs on the home page.
 * All the logic is handled in the routes file, which is not done I know. This should be in a controller.
 * You could check the file type in the controller then as well, instead of a seperate job.

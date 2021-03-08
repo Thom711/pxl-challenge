@@ -44,12 +44,12 @@ class MigrateData implements ShouldQueue
 
         if ($this->extension === 'csv') {
             // MigrateDataCsv::dispatch();
-            // Which cleans and seperates the data, then simply calls the HandleUser job
+            // Which cleans and seperates the data, then calls the HandleUser job
         }
 
         if ($this->extension === 'xml') {
             // MigrateDataXml::dispatch();
-            // Which cleans and seperates the data, then simply calls the HandleUser job
+            // Which cleans and seperates the data, then calls the HandleUser job
         }
 
         // You could put an error message here, 'No valid file given.'
