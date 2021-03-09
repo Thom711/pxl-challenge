@@ -1,7 +1,7 @@
 # Documentation
 Hello people! How to use the app:
-* Install dependancies, composer install and npm install (JsonReader and TailwindCSS)
-* In .env, set the queue-connection to database.
+* Install dependancies, composer install, npm install (JsonReader and TailwindCSS) & npm run dev
+* In .env, set the queue-connection to database
 * Open the home page
 * Upload the challenge.json file and click submit
 * Run php artisan queue:work
