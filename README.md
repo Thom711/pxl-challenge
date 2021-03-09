@@ -12,26 +12,28 @@ maximum ages of users. It then checks the file extension, if it's Json the Migra
 This job transforms the min age and max age to Carbon instances then reads the file
 with JsonReader. JsonReader loads the file line by line, instead of all at once. For each object in the file a HandleUser job is called. After MigrateDataJson is finished, you can interrupt the process whenever you want. 
 
-HandleUser instantiates a User model, and fills it with the data given from the Json file. By a method on the User model, the date of birth field is set. The next method
-checks if the user meets the criteria (above 18, under 65 or birthdate unknown). Only
-then it's persisted in the database. The creditcard model is then created and persisted as well.
+HandleUser validates the given data and quietly fails if it's invalid. Then it instantiates a User model, and fills it with the data given from the Json file. By a method on the User model, the date of birth field is set. The next method
+checks if the user meets the criteria (above 18, under 65 or birthdate unknown). If it passes it's persisted in the database (wrapped in a transaction), together with the associated creditcard.
 
 That's all there is to it!
 
 Some notes:
 * I looked into batching, but it's new to me so I decided not to use it for now. 
+* The logic in MigrateDataJson might be better suited as it's own class / service, for now I decided not to, I did not feel comfortable doing that yet.
 * I thought about calling the queue like this: Artisan::call('queue:work');, but it freezes the page until it's finished.
 * The minimum and maximum age could be inputs on the home page.
 * All the logic is handled in the routes file, which is not done I know. This should be in a controller.
 * You could check the file type in the controller then as well, instead of a seperate job.
-
+* The HandleUser job: 
+    * Validation could be it's own method on the class.
+    * Wrapping it in a transaction was neat! Only recently learned about those.
 
 Below are the thought processes I had while creating this, if you're interested.
 
 
-# Working Method
+# Original Assignment
 
-**Assignment**
+**Description**
 In resources/opdracht is a file called challenge.json. Goal is to write the content of that
 file neatly to a database. Preferably as a background task in a Laravel application. After
 finishing, it's important to document the way of thinking behind my approach.
@@ -66,7 +68,7 @@ array:9 [▼
 ]
 ```
 
-**The way I want to approach this assignment is**
+**Working Method**
 
 The main process is a job / controller called MigrateData. 
 The process will use JSONReader, https://github.com/pcrov/JsonReader, to parse JSON file line by line.
@@ -82,7 +84,7 @@ Thus, allowing the process to be interruptible.
 - The queue should be set to database in the .env file.
 
 
-**Thought Process During Development**
+**Thought Process / Rantings**
 
 I thought about using batchable jobs to split the json file into jobs per 100 rows. But this meant still having to load the JSON file in first. So
 JSON reader is the way to go I think. It should still be possible to code it a bit dynamic and batch the jobs per 100 entries.

@@ -51,7 +51,6 @@ class HandleUser implements ShouldQueue
         ]);
 
         if ($userValidator->fails() || $creditcardValidator->fails()) {
-            dd($userValidator->errors(), $creditcardValidator->errors());
             return;
         }
 

@@ -27,9 +27,7 @@ class MigrateDataJson implements ShouldQueue
     }
 
     public function handle()
-    {
-        // One idea is to handle this logic in it's own class. I was not comfortable enough in doing that to make it work
-        
+    {    
         $reader = new JsonReader();
 
         $reader->open(base_path($this->path));
