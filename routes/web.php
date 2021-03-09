@@ -23,7 +23,7 @@ Route::get('/', function () {
 });
 
 Route::post('/', function () {
-    // If this was in an application this reeeeally should be in a controller. It feels bad doing it in the routes file.
+    // If this was in an application this reeeeally should be in a controller. It feels bad doing it in the routes file
     $jobMessage = '';
 
     if(request('file')) {
@@ -35,7 +35,7 @@ Route::post('/', function () {
 
         $path = 'storage/app/' . $file;
 
-        $minAge = 18; // These two could be inputs as well.
+        $minAge = 18; // These two could be inputs as well
         $maxAge = 65;
 
         MigrateData::dispatch($path, $extension, $minAge, $maxAge);

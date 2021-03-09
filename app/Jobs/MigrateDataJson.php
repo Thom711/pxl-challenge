@@ -15,29 +15,21 @@ class MigrateDataJson implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $path;
-    protected $minDate;
-    protected $maxDate;
+    protected string $path;
+    protected Carbon $minimalBirthDate;
+    protected Carbon $maximalBirthDate;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(string $path, int $minAge, int $maxAge)
+    public function __construct(string $path, int $minimumAge, int $maximumAge)
     {
         $this->path = $path;
-        $this->minDate = Carbon::today()->subYears($maxAge);
-        $this->maxDate = Carbon::today()->subYears($minAge);
+        $this->minimalBirthDate = Carbon::today()->subYears($maximumAge); 
+        $this->maximalBirthDate = Carbon::today()->subYears($minimumAge); 
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
+        // One idea is to handle this logic in it's own class. I was not comfortable enough in doing that to make it work
+        
         $reader = new JsonReader();
 
         $reader->open(base_path($this->path));
@@ -49,7 +41,7 @@ class MigrateDataJson implements ShouldQueue
         while ($reader->type() === JsonReader::OBJECT) {
             $data = $reader->value();
 
-            HandleUser::dispatch($data, $this->minDate, $this->maxDate);
+            HandleUser::dispatch($data, $this->minimalBirthDate, $this->maximalBirthDate);
 
             $reader->next();
         }

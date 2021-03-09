@@ -15,29 +15,21 @@ class HandleUser implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $data;
-    protected $minDate;
-    protected $maxDate;
+    protected array $data;
+    protected Carbon $minimalBirthDate;
+    protected Carbon $maximalBirthDate;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(array $data, Carbon $minDate, Carbon $maxDate)
+    public function __construct(array $data, Carbon $minimalBirthDate, Carbon $maximalBirthDate)
     {
         $this->data = $data;
-        $this->minDate = $minDate;
-        $this->maxDate = $maxDate;
+        $this->minimalBirthDate = $minimalBirthDate;
+        $this->maximalBirthDate = $maximalBirthDate;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
-    {
+    { 
+        // valideer input
+
         $user = User::make([
             'name' => $this->data['name'],
             'address' => $this->data['address'],
@@ -50,21 +42,25 @@ class HandleUser implements ShouldQueue
 
         $user->setDateOfBirth($this->data['date_of_birth']);
 
-        if ($user->isOfRightAge($this->minDate, $this->maxDate)) {
-            $user->save();
-
-            $creditcard = $this->data['credit_card'];
-
-            $expiration_date_array = explode('/', $creditcard['expirationDate']);
-
-            $expiration_date = Carbon::createFromDate($expiration_date_array[1], $expiration_date_array[0], 1)->isoFormat('Y-M-D');
-
-            $user->creditcard()->create([
-                'type' => $creditcard['type'],
-                'number' => $creditcard['number'],
-                'name' => $creditcard['name'],
-                'expiration_date' => $expiration_date,
-            ]);
+        if (!$user->isOfRightAge($this->minimalBirthDate, $this->maximalBirthDate)) {
+            return;
         }
+
+        // db transaction
+
+        $user->save();
+
+        $creditcard = $this->data['credit_card'];
+
+        $expirationDateArray = explode('/', $creditcard['expirationDate']);
+
+        $expirationDate = Carbon::createFromDate($expirationDateArray[1], $expirationDateArray[0], 1)->isoFormat('Y-M-D');
+
+        $user->creditcard()->create([
+            'type' => $creditcard['type'],
+            'number' => $creditcard['number'],
+            'name' => $creditcard['name'],
+            'expiration_date' => $expirationDate,
+        ]);
     }
 }

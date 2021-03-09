@@ -13,33 +13,23 @@ class MigrateData implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $path;
-    protected $extension;
-    protected $minAge;
-    protected $maxAge;
+    protected string $path;
+    protected string $extension;
+    protected int $minimumAge;
+    protected int $maximumAge;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(string $path, string $extension, int $minAge, int $maxAge)
+    public function __construct(string $path, string $extension, int $minimumAge, int $maximumAge)
     {
         $this->path = $path;
         $this->extension = $extension;
-        $this->minAge = $minAge;
-        $this->maxAge = $maxAge;
+        $this->minimumAge = $minimumAge;
+        $this->maximumAge = $maximumAge;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
         if ($this->extension === 'json') {
-            MigrateDataJson::dispatch($this->path, $this->minAge, $this->maxAge);
+            MigrateDataJson::dispatch($this->path, $this->minimumAge, $this->maximumAge);
         }
 
         if ($this->extension === 'csv') {
@@ -52,6 +42,6 @@ class MigrateData implements ShouldQueue
             // Which cleans and seperates the data, then calls the HandleUser job
         }
 
-        // You could put an error message here, 'No valid file given.'
+        // You could throw an exception here, no valid file given or let the job finish without doing anything
     }
 }
