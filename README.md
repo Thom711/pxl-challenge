@@ -25,7 +25,7 @@ Some notes:
 * All the logic is handled in the routes file, which is not done I know. This should be in a controller.
 * You could check the file type in the controller then as well, instead of a seperate job.
 * The HandleUser job: 
-    * Validation could be it's own method on the class.
+    * Validation could / should be it's own method / service class.
     * Wrapping it in a transaction was neat! Only recently learned about those.
 
 Below are the thought processes I had while creating this, if you're interested.
