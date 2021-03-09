@@ -10,6 +10,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class HandleUser implements ShouldQueue
 {
@@ -18,6 +20,7 @@ class HandleUser implements ShouldQueue
     protected array $data;
     protected Carbon $minimalBirthDate;
     protected Carbon $maximalBirthDate;
+    protected User $user;
 
     public function __construct(array $data, Carbon $minimalBirthDate, Carbon $maximalBirthDate)
     {
@@ -28,9 +31,31 @@ class HandleUser implements ShouldQueue
 
     public function handle()
     { 
-        // valideer input
+        $userValidator = Validator::make($this->data, [
+            'name' => 'required|string',
+            'address' => 'required|string',
+            'checked' => 'required|boolean',
+            'description' => 'required|string',
+            'interest' => 'string|nullable',
+            'email' => 'required|email',
+            'account' => 'required|numeric',
+            'date_of_birth' => 'string|nullable',
+            'credit_card' => 'required|array',
+        ]);
 
-        $user = User::make([
+        $creditcardValidator = Validator::make($this->data['credit_card'], [
+            'type' => 'required|string',
+            'number' => 'required|numeric',
+            'name' => 'required|string',
+            'expirationDate' => 'required|string'
+        ]);
+
+        if ($userValidator->fails() || $creditcardValidator->fails()) {
+            dd($userValidator->errors(), $creditcardValidator->errors());
+            return;
+        }
+
+        $this->user = User::make([
             'name' => $this->data['name'],
             'address' => $this->data['address'],
             'checked' => $this->data['checked'],
@@ -40,27 +65,27 @@ class HandleUser implements ShouldQueue
             'account' => $this->data['account'],
         ]);
 
-        $user->setDateOfBirth($this->data['date_of_birth']);
+        $this->user->setDateOfBirth($this->data['date_of_birth']);
 
-        if (!$user->isOfRightAge($this->minimalBirthDate, $this->maximalBirthDate)) {
+        if (!$this->user->isOfRightAge($this->minimalBirthDate, $this->maximalBirthDate)) {
             return;
         }
 
-        // db transaction
+        DB::transaction(function () {
+            $this->user->save();
 
-        $user->save();
+            $creditcard = $this->data['credit_card'];
 
-        $creditcard = $this->data['credit_card'];
+            $expirationDateArray = explode('/', $creditcard['expirationDate']);
 
-        $expirationDateArray = explode('/', $creditcard['expirationDate']);
+            $expirationDate = Carbon::createFromDate($expirationDateArray[1], $expirationDateArray[0], 1)->isoFormat('Y-M-D');
 
-        $expirationDate = Carbon::createFromDate($expirationDateArray[1], $expirationDateArray[0], 1)->isoFormat('Y-M-D');
-
-        $user->creditcard()->create([
+            $this->user->creditcard()->create([
             'type' => $creditcard['type'],
             'number' => $creditcard['number'],
             'name' => $creditcard['name'],
             'expiration_date' => $expirationDate,
-        ]);
+            ]);
+        });
     }
 }
