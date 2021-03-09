@@ -41,11 +41,11 @@ Route::post('/', function () {
         MigrateData::dispatch($path, $extension, $minAge, $maxAge);
 
         $jobMessage = 'The job is now in the Queue. Run the queue:work command to execute it.';
-
-        return view('welcome', [
-            'job' => $jobMessage,
-        ]);
     }
+
+    return view('welcome', [
+        'job' => $jobMessage,
+    ]);
 });
 
 //  In case the front does not work, comment the above two methods and uncomment the code below: 

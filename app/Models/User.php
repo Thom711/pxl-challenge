@@ -53,4 +53,18 @@ class User extends Authenticatable
 
         return (($date_of_birth > $minDate && $date_of_birth < $maxDate) || $date_of_birth === null);
     } 
+
+    public function storeCreditcard(array $creditcard)
+    {
+        $expirationDateArray = explode('/', $creditcard['expirationDate']);
+
+        $expirationDate = Carbon::createFromDate($expirationDateArray[1], $expirationDateArray[0], 1)->isoFormat('Y-M-D');
+
+        $this->creditcard()->create([
+        'type' => $creditcard['type'],
+        'number' => $creditcard['number'],
+        'name' => $creditcard['name'],
+        'expiration_date' => $expirationDate,
+        ]);
+    }
 }

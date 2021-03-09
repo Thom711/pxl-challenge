@@ -73,18 +73,7 @@ class HandleUser implements ShouldQueue
         DB::transaction(function () {
             $this->user->save();
 
-            $creditcard = $this->data['credit_card'];
-
-            $expirationDateArray = explode('/', $creditcard['expirationDate']);
-
-            $expirationDate = Carbon::createFromDate($expirationDateArray[1], $expirationDateArray[0], 1)->isoFormat('Y-M-D');
-
-            $this->user->creditcard()->create([
-            'type' => $creditcard['type'],
-            'number' => $creditcard['number'],
-            'name' => $creditcard['name'],
-            'expiration_date' => $expirationDate,
-            ]);
+            $this->user->storeCreditcard($this->data['credit_card']);
         });
     }
 }
